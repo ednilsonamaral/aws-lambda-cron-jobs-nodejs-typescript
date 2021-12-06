@@ -1,0 +1,30 @@
+image: node:12.16.1
+
+pipelines:
+  branches:
+    staging:
+      - step:
+          name: AWS Build and Deploy (DEV)
+          caches:
+            - node
+          script:
+            - npm install -g serverless
+            - cd app
+            - npm install
+            - npm run build
+            - cd ..
+            - serverless config credentials --stage dev --provider aws --key ${AWS_ACCESS_KEY_LAMBDA_DEV} --secret ${AWS_SECRET_KEY_LAMBDA_DEV}
+            - serverless deploy --stage dev
+    master:
+      - step:
+          name: AWS Build and Deploy (PROD)
+          caches:
+            - node
+          script:
+            - npm install -g serverless
+            - cd app
+            - npm install
+            - npm run build
+            - cd ..
+            - serverless config credentials --stage prod --provider aws --key ${AWS_ACCESS_KEY_LAMBDA_PROD} --secret ${AWS_SECRET_KEY_LAMBDA_PROD}
+            - serverless deploy --stage prod
