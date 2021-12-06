@@ -1,0 +1,27 @@
+service: aws-lambda-cron-jobs-nodejs-typescript
+
+custom:
+  stages:
+    dev:
+      region: "us-east-1"
+      environment:
+        ENVIRONMENT: development
+    prod:
+      region: "sa-east-1"
+      environment:
+        ENVIRONMENT: production
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+
+functions:
+  HelloWorldFunction:
+    handler: app/dist/functions/hello-world/index.handler
+    events:
+      - schedule: rate(1 minute)
+  CheckPendingSchedules:
+    handler: app/dist/functions/check-pending-tasks/index.handler
+    events:
+      - schedule: rate(1 minute)
